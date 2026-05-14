@@ -4,10 +4,10 @@ import { useAuth } from '../hooks/useAuth';
 import { PresenceCluster } from './PresenceCluster';
 
 const navItems = [
-  { to: '/',           label: 'Feed'      },
-  { to: '/dashboard',  label: 'Dashboard' },
-  { to: '/pulse',      label: 'Pulse'     },
-  { to: '/admin',      label: 'Admin', adminOnly: true },
+  { to: '/',            label: 'Feed'      },
+  { to: '/dashboard',   label: 'Dashboard' },
+  { to: '/pulse',       label: 'Pulse'     },
+  { to: '/admin',       label: 'Admin', adminOnly: true },
 ];
 
 export function Layout({ children }) {
@@ -73,4 +73,9 @@ export function Layout({ children }) {
       </header>
 
       {/* Page content */}
-      <main className="px-6 py-6 max-w-screen-x
+      <main className="px-6 py-6 max-w-screen-xl mx-auto">
+        {children}
+      </main>
+    </div>
+  );
+}
