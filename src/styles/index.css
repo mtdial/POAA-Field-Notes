@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base font override -- Tailwind's sans is already set to Arial via tailwind.config.js */
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #2B2B2B;
+}
