@@ -7,6 +7,7 @@ import Feed from './pages/Feed';
 import EntryDetail from './pages/EntryDetail';
 import PulseLog from './pages/PulseLog';
 import Admin from './pages/Admin';
+import Dashboard from './pages/Dashboard';
 
 function ProtectedLayout({ children, requireAdmin = false }) {
   return (
@@ -30,6 +31,10 @@ export default function App() {
           <Route
             path="/entries/:id"
             element={<ProtectedLayout><EntryDetail /></ProtectedLayout>}
+          />
+          <Route
+            path="/dashboard"
+            element={<ProtectedLayout><Dashboard /></ProtectedLayout>}
           />
           <Route
             path="/pulse"
