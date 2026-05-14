@@ -21,7 +21,6 @@ function EntryViewers({ entryId }) {
       `entry-${entryId}`,
       { id: profile.id, display_name: profile.display_name, initials: profile.initials },
       (users) => {
-        // Exclude the current user from the displayed list
         setViewers(users.filter((u) => u.id !== profile.id));
       }
     );
@@ -83,7 +82,6 @@ function Field({ label, children }) {
   );
 }
 
-// Inline tag editor: existing chips + "+ Add tag" input
 function TagEditor({ tags, onChange }) {
   const [input, setInput] = useState('');
 
@@ -138,6 +136,8 @@ export default function EntryDetail() {
   const [showHistory, setShowHistory] = useState(false);
   const [editLog, setEditLog]   = useState([]);
   const [logLoading, setLogLoading] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     fetchEntry();
@@ -209,6 +209,18 @@ export default function EntryDetail() {
     setShowHistory(true);
   }
 
+  async function deleteEntry() {
+    setDeleting(true);
+    const { error } = await supabase.from('entries').delete().eq('id', id);
+    if (error) {
+      alert(`Delete failed: ${error.message}`);
+      setDeleting(false);
+      setConfirmDelete(false);
+    } else {
+      navigate('/', { replace: true });
+    }
+  }
+
   if (loading) return <p className="text-sm text-mid-grey">Loading...</p>;
   if (error)   return <p className="text-sm text-garnet">Error: {error}</p>;
   if (!entry)  return <p className="text-sm text-mid-grey">Entry not found.</p>;
@@ -266,12 +278,40 @@ export default function EntryDetail() {
               </button>
             </>
           ) : (
-            <button
-              onClick={() => setEditing(true)}
-              className="text-xs px-3 py-1.5 rounded border border-light-grey text-mid-grey hover:border-mid-grey"
-            >
-              Edit
-            </button>
+            <>
+              <button
+                onClick={() => setEditing(true)}
+                className="text-xs px-3 py-1.5 rounded border border-light-grey text-mid-grey hover:border-mid-grey"
+              >
+                Edit
+              </button>
+              {profile?.is_admin && !confirmDelete && (
+                <button
+                  onClick={() => setConfirmDelete(true)}
+                  className="text-xs px-3 py-1.5 rounded border border-red-200 text-red-600 hover:bg-red-50"
+                >
+                  Delete
+                </button>
+              )}
+              {profile?.is_admin && confirmDelete && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-red-600">Delete this entry?</span>
+                  <button
+                    onClick={() => setConfirmDelete(false)}
+                    className="text-xs px-2.5 py-1 rounded border border-light-grey text-mid-grey hover:border-mid-grey"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={deleteEntry}
+                    disabled={deleting}
+                    className="text-xs px-2.5 py-1 rounded text-white font-medium bg-red-600 hover:bg-red-700 disabled:opacity-60"
+                  >
+                    {deleting ? 'Deleting...' : 'Confirm delete'}
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
